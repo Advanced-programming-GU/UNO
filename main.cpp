@@ -69,6 +69,9 @@ class WildCard:public Card{
 public:
     WildCard(CardType t) : Card(NONE, t) {};
     bool playCard(Card* topCard){
+        if(topCard->cardType==DRAW_TWO || topCard->cardType==WILD_DRAW_FOUR){
+            return false;
+        }
         return true;
     }
     void chooseColor() {
@@ -182,7 +185,7 @@ public:
             cout << i + 1 << ": ";
             hand[i]->print();
             cout << endl;
-            if (hand[i]->playCard(topCard)) {
+            if (hand[i]->playCard(topCard) && stack==0) {
                 playableCards.push_back(i);
             }
         }
@@ -195,6 +198,7 @@ public:
                     cout << i + 1 << ": ";
                     hand[i]->print();
                     cout << " (stackable)\n";
+                    playableCards.push_back(i);
                 }
             }
 
@@ -233,7 +237,7 @@ public:
         while (true) {
             cout << "\nEnter the index of the card you want to play: ";
             cin >> choice;
-            if (choice >= 1 && choice <= playableCards.size() && hand[choice - 1]->playCard(topCard)) {
+            if (choice >= 1 && choice <= 100 && hand[choice - 1]->playCard(topCard)) {
                 topCard = hand[choice - 1];
                 if (topCard->cardType == WILD_DRAW_FOUR){
                     stack = stack + 4;
@@ -271,10 +275,10 @@ public:
         topCard->print();
         cout << endl;
         int bestIndex = -1;
+        vector<int>playableCards;
         for (int i = 0; i < hand.size(); i++) {
             if (hand[i]->playCard(topCard)) {
                 bestIndex = i;
-                break;
             }
         }
         if (stack > 0) {
@@ -308,6 +312,9 @@ public:
         }
         Card* chosen = hand[bestIndex];
         topCard = chosen;
+        cout << "Bot played: ";
+        topCard->print();
+        cout << endl;
         if (topCard->cardType == WILD || topCard->cardType == WILD_DRAW_FOUR) {
             Color randomColor = (Color) ((rand() % 4) + 1);
             ((WildCard *) topCard)->color = randomColor;
@@ -319,9 +326,7 @@ public:
         if (topCard->cardType == DRAW_TWO){
             stack = stack + 2;
         }
-        cout << "Bot played: ";
-        topCard->print();
-        cout << endl;
+
         vector<Card *> newHand;
         for (int i = 0; i < hand.size(); i++) {
             if (i != bestIndex) {
