@@ -99,6 +99,8 @@ class ActionCard: public Card {
 public:
     ActionCard(Color color, CardType cardtype) : Card(color, cardtype) {}
     bool playCard(Card *topCard) {
+        if (topCard -> cardType == DRAW_TWO or topCard -> cardType == WILD_DRAW_FOUR and cardType == DRAW_TWO or cardType == WILD_DRAW_FOUR){
+            return true;)}
         if (color == topCard->color) {
             return true;
         }
