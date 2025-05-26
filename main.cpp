@@ -28,6 +28,7 @@ public:
     }
     virtual void print() {
         cout << "Card: "<<colortostring(color)<<" ";
+
         switch(cardType) {
             case NUMBER: cout << "Number"; break;
             case SKIP: cout << "Skip"; break;
@@ -144,16 +145,24 @@ public:
     virtual void playTurn(Card*& topCard, int& stack) = 0;
     void drawCard(int stack) {
         for (int i = 1; i <= stack; i++) {
-            Color randomColor = (Color) ((rand() % 4)+1);
-            CardType randomCardType = (CardType) (rand() % 6);
-            if (randomCardType == 0) {
-                int randomNumber = rand() % 10;
-                hand.push_back(new NumberCard(randomColor, randomCardType, randomNumber));
-            } else if (randomCardType == WILD or randomCardType == WILD_DRAW_FOUR) {
-                hand.push_back(new WildCard(randomCardType));
-            } else {
-                hand.push_back(new ActionCard(randomColor, randomCardType));
+            int s = (rand() % 10);
+            if (s > 8) {
+                Color randomColor = (Color) ((rand() % 4) + 1);
+                CardType randomCardType = (CardType) (rand() % 6);
+                if (randomCardType == 0) {
+                    int randomNumber = rand() % 10;
+                    hand.push_back(new NumberCard(randomColor, randomCardType, randomNumber));
+                } else if (randomCardType == WILD or randomCardType == WILD_DRAW_FOUR) {
+                    hand.push_back(new WildCard(randomCardType));
+                } else {
+                    hand.push_back(new ActionCard(randomColor, randomCardType));
 
+                }
+            }
+            else {
+                Color randomColor = (Color) ((rand() % 4) + 1);
+                int randomNumber = rand() % 10;
+                hand.push_back(new NumberCard(randomColor, NUMBER , randomNumber));
             }
         }
 
@@ -179,8 +188,8 @@ public:
         if (stack > 0) {    //shows stackable cards
             bool canStack = false;
             for (int i = 0; i < hand.size(); i++) {
-                if ((topCard->cardType == DRAW_TWO or topCard->cardType == WILD_DRAW_FOUR) ||
-                    (hand[i]->cardType == DRAW_TWO  or hand[i]->cardType == WILD_DRAW_FOUR)) {
+                if ((topCard->cardType == DRAW_TWO && hand[i]->cardType == DRAW_TWO) ||
+                    (topCard->cardType == WILD_DRAW_FOUR && hand[i]->cardType == WILD_DRAW_FOUR)) {
                     canStack = true;
                     cout << i + 1 << ": ";
                     hand[i]->print();
@@ -193,14 +202,7 @@ public:
                 cout << "No stackable card. Drawing " << stack << " cards.\n";
                 drawCard(stack);
                 stack = 0;
-                for (int i = 0; i < hand.size(); i++) {
-                    if (hand[i]->playCard(topCard)) {
-                        playableCards.push_back(i);
-                    }
-                }
-                if (playableCards.empty()) {
-                    return;
-                }
+                return;
             }
         }
         if (playableCards.empty()) {
@@ -260,8 +262,8 @@ public:
         int bestIndex = -1;
         if (stack > 0) {
             for (int i = 0; i < hand.size(); i++) {
-                if ((topCard->cardType == DRAW_TWO or topCard->cardType == WILD_DRAW_FOUR) ||
-                    (hand[i]->cardType == DRAW_TWO  or hand[i]->cardType == WILD_DRAW_FOUR)) {
+                if ((topCard->cardType == DRAW_TWO && hand[i]->cardType == DRAW_TWO) ||
+                    (topCard->cardType == WILD_DRAW_FOUR && hand[i]->cardType == WILD_DRAW_FOUR)) {
                     bestIndex = i;
                     break;
                 }
@@ -271,15 +273,7 @@ public:
                 cout << "Bot has no stackable card. Drawing " << stack << " cards.\n";
                 drawCard(stack);
                 stack = 0;
-                for (int i = 0; i < hand.size(); i++) {
-                    if (hand[i]->playCard(topCard)) {
-                        bestIndex = i;
-                    }
-                }
-                if (bestIndex == -1) {
                     return;
-                }
-
 
             }}
         for (int i = 0; i < hand.size(); i++) {
@@ -292,7 +286,7 @@ public:
             drawCard(1);
             for (int i = 0; i < hand.size(); i++) {
                 if (hand[i]->playCard(topCard)) {
-                   bestIndex = i;
+                    bestIndex = i;
                 }}
             if(bestIndex == -1){
                 return;
