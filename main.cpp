@@ -28,7 +28,6 @@ public:
     }
     virtual void print() {
         cout << "Card: "<<colortostring(color)<<" ";
-
         switch(cardType) {
             case NUMBER: cout << "Number"; break;
             case SKIP: cout << "Skip"; break;
