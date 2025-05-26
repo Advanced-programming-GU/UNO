@@ -180,8 +180,8 @@ public:
         if (stack > 0) {    //shows stackable cards
             bool canStack = false;
             for (int i = 0; i < hand.size(); i++) {
-                if ((topCard->cardType == DRAW_TWO && hand[i]->cardType == DRAW_TWO) ||
-                    (topCard->cardType == WILD_DRAW_FOUR && hand[i]->cardType == WILD_DRAW_FOUR)) {
+                if ((topCard->cardType == DRAW_TWO or topCard->cardType == WILD_DRAW_FOUR) ||
+                    (hand[i]->cardType == DRAW_TWO  or hand[i]->cardType == WILD_DRAW_FOUR)) {
                     canStack = true;
                     cout << i + 1 << ": ";
                     hand[i]->print();
@@ -261,8 +261,8 @@ public:
         int bestIndex = -1;
         if (stack > 0) {
             for (int i = 0; i < hand.size(); i++) {
-                if ((topCard->cardType == DRAW_TWO && hand[i]->cardType == DRAW_TWO) ||
-                    (topCard->cardType == WILD_DRAW_FOUR && hand[i]->cardType == WILD_DRAW_FOUR)) {
+                if ((topCard->cardType == DRAW_TWO or topCard->cardType == WILD_DRAW_FOUR) ||
+                    (hand[i]->cardType == DRAW_TWO  or hand[i]->cardType == WILD_DRAW_FOUR)) {
                     bestIndex = i;
                     break;
                 }
